@@ -27,6 +27,7 @@ library(ggpubr)
 library(psych)
 library(rcompanion)
 library(sjstats)
+library(Hmisc)
 
 loadfonts() # Load the available fonts in Windows
 
@@ -607,3 +608,59 @@ LMI_cntry<-ggpar(LMI_cntry,
 ggsave(
   filename="LMI_cntry.tiff",plot=LMI_cntry,device="tiff",
   width=20,height=20,units="cm",dpi=300)
+
+
+##########
+
+# CORRELATIONS MATRIX, ALL VARIABLES
+
+ESS2016$lwparents_num<-numeric(nrow(ESS2016))
+ESS2016$lwparents_num[which(ESS2016$lwparents_bin=="Yes")]=1
+ESS2016$lwparents_num[which(ESS2016$lwparents_bin=="No")]=0
+ESS2016$lwparents_num[which(is.na(ESS2016$lwparents_bin))]=NA
+
+ESS2016$act_4c_secure<-numeric(nrow(ESS2016))
+ESS2016$act_4c_secure[which(ESS2016$act_4c=="Securely employed")]=1
+ESS2016$act_4c_secure[which(ESS2016$act_4c!="Securely employed")]=0
+ESS2016$act_4c_secure[which(is.na(ESS2016$act_4c))]=NA
+
+ESS2016$act_4c_atypical<-numeric(nrow(ESS2016))
+ESS2016$act_4c_atypical[which(ESS2016$act_4c=="Atypically employed")]=1
+ESS2016$act_4c_atypical[which(ESS2016$act_4c!="Atypically employed")]=0
+ESS2016$act_4c_atypical[which(is.na(ESS2016$act_4c))]=NA
+
+ESS2016$act_4c_NEET<-numeric(nrow(ESS2016))
+ESS2016$act_4c_NEET[which(ESS2016$act_4c=="NEET")]=1
+ESS2016$act_4c_NEET[which(ESS2016$act_4c!="NEET")]=0
+ESS2016$act_4c_NEET[which(is.na(ESS2016$act_4c))]=NA
+
+ESS2016$act_4c_edu<-numeric(nrow(ESS2016))
+ESS2016$act_4c_edu[which(ESS2016$act_4c=="In education")]=1
+ESS2016$act_4c_edu[which(ESS2016$act_4c!="In education")]=0
+ESS2016$act_4c_edu[which(is.na(ESS2016$act_4c))]=NA
+
+ESS2016$lwpartner_num<-numeric(nrow(ESS2016))
+ESS2016$lwpartner_num[which(ESS2016$lwpartner=="Yes")]=1
+ESS2016$lwpartner_num[which(ESS2016$lwpartner=="No")]=0
+ESS2016$lwpartner_num[which(is.na(ESS2016$lwpartner))]=NA
+
+ESS2016$gndr_num<-numeric(nrow(ESS2016))
+ESS2016$gndr_num[which(ESS2016$gndr=="Male")]=1
+ESS2016$gndr_num[which(ESS2016$gndr=="Female")]=0
+ESS2016$gndr_num[which(ESS2016$gndr=="No answer")]=NA
+
+ESS2016$eisced_num<-numeric(nrow(ESS2016))
+ESS2016$eisced_num[which(ESS2016$eisced_dum=="Below higher secondary education")]=0
+ESS2016$eisced_num[which(ESS2016$eisced_dum=="Completed higher secondary education")]=1
+ESS2016$eisced_num[which(is.na(ESS2016$eisced_dum))]=NA
+
+cor.data<-ESS2016[A18_39Ind16,c("gvslvue_grp_num","basinc_num","lwparents_num","act_4c_secure","act_4c_atypical",
+                     "act_4c_NEET","act_4c_edu","lmr_SH","lmr_Rehm",
+                     "hhinctnta_num","lwpartner_num","agea","gndr_num","eisced_num",
+                     "freehms_num","rlgatnd_num",
+                     "ChR","SPB_ES")]
+
+cor.table<-cor(cor.data,use="complete.obs")
+cor.table<-round(cor.table,2)
+
+cor.tests<-rcorr(as.matrix(cor.data))
